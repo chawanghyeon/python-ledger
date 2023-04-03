@@ -33,8 +33,6 @@ repos:
             args:
                 [
                     "--exit-zero",
-                    "--disable=all",
-                    "--enable=F,E,unreachable,duplicate-key,unnecessary-semicolon,global-variable-not-used,unused-variable,binary-op-exception,bad-format-string,anomalous-backslash-in-string,bad-open-mode",
                     "--max-line-length=120",
                     "--ignore-imports=y",
                     "--ignore-comments=y",
