@@ -9,17 +9,15 @@ from rest_framework_simplejwt.views import (
 )
 
 from custom_types.views import CustomTypeViewSet
+from ledgers.views import LedgerViewSet
 from monthly_budgets.views import MonthlyBudgetViewSet
 from users.views import UserViewSet
-
-# from ledgers.views import LedgerViewSet
-
 
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="users")
 router.register("monthly-budgets", MonthlyBudgetViewSet, basename="monthly-budgets")
 router.register("custom-types", CustomTypeViewSet, basename="custom-types")
-# router.register("ledgers", LedgerViewSet, basename="ledgers")
+router.register("ledgers", LedgerViewSet, basename="ledgers")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
