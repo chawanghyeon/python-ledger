@@ -41,3 +41,16 @@ class MonthlyBudgetViewSetTestCase(APITestCase):
                 month=self.monthly_budget_data["month"],
             ).exists()
         )
+
+    def test_retrieve_monthly_budget(self):
+        response = self.client.get(
+            reverse(
+                "monthly-budgets-detail",
+                args=[self.monthly_budget1.id],
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.monthly_budget1.id)
+        self.assertEqual(response.data["year"], self.monthly_budget1.year)
+        self.assertEqual(response.data["month"], self.monthly_budget1.month)
+        self.assertEqual(response.data["budget"], f"{self.monthly_budget1.budget:.2f}")
