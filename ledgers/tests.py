@@ -148,3 +148,8 @@ class LedgerViewSetTestCase(APITestCase):
         self.client.credentials()
         response = self.client.delete(reverse("ledgers-detail", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_list_ledger_without_authentication(self):
+        self.client.credentials()
+        response = self.client.get(reverse("ledgers-list"))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
