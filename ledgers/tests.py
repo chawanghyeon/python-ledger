@@ -164,3 +164,8 @@ class LedgerViewSetTestCase(APITestCase):
             reverse("ledgers-duplicate", args=[self.ledger1.id]),
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_share_ledger_without_authentication(self):
+        self.client.credentials()
+        response = self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
