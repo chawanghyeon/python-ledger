@@ -5,6 +5,6 @@ from custom_types.models import CustomType
 
 class CustomTypeSerializer(ModelSerializer):
     class Meta:
-        fields = "__all__"
+        exclude = ("user",)
         model = CustomType
         depth = 1
