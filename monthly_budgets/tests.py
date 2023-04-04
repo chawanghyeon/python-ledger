@@ -97,3 +97,12 @@ class MonthlyBudgetViewSetTestCase(APITestCase):
         response = self.client.get(reverse("monthly-budgets-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 5)
+
+    def test_create_monthly_budget_with_invalid_data(self):
+        MonthlyBudget.objects.all().delete()
+        response = self.client.post(
+            reverse("monthly-budgets-list"),
+            {"year": 2023, "month": 4, "budget": -1000},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(MonthlyBudget.objects.exists())

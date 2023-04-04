@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -8,7 +9,9 @@ class MonthlyBudget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     year = models.IntegerField()
     month = models.IntegerField()
-    budget = models.DecimalField(max_digits=10, decimal_places=2)
+    budget = models.DecimalField(
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+    )
 
     class Meta:
         unique_together = ("user", "year", "month")
