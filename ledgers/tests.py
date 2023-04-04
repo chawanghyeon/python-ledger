@@ -98,3 +98,12 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.get(reverse("ledgers-date"), {"year": 2023, "month": 3})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 3)
+
+    def test_duplicate_ledger(self):
+        response = self.client.post(
+            reverse("ledgers-duplicate", args=[self.ledger1.id]),
+            {"date": "2023-03-04"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Ledger.objects.count(), 2)
+        self.assertEqual(response.data["name"], "ledger1")

@@ -62,3 +62,15 @@ class LedgerViewSet(viewsets.ModelViewSet):
             data.data["monthly_budget"] = monthly_budget.budget
 
         return data
+
+    @action(detail=True, methods=["post"], url_path="duplicate", url_name="duplicate")
+    def duplicate_ledger(self, request: HttpRequest, pk: int) -> Response:
+        ledger = Ledger.objects.get(id=pk)
+        ledger.pk = None
+
+        serializer = LedgerSerializer(ledger)
+        serializer = LedgerSerializer(data=serializer.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user, type_id=ledger.type_id)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
