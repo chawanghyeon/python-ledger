@@ -50,15 +50,7 @@ class LedgerViewSet(viewsets.ModelViewSet):
             date__month=month,
         ).order_by("-date", "-id")
 
-        paginator = self.paginator
-        paginator.ordering = "-date", "-id"
-        page = paginator.paginate_queryset(queryset, request)
-
-        if page is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = LedgerSerializer(page, many=True)
-        data = paginator.get_paginated_response(serializer.data)
+        data = LedgerSerializer(queryset, many=True).data
 
         monthly_budget = MonthlyBudget.objects.filter(
             user=request.user, year=year, month=month
@@ -67,7 +59,7 @@ class LedgerViewSet(viewsets.ModelViewSet):
         if monthly_budget:
             data.data["monthly_budget"] = monthly_budget.budget
 
-        return data
+        return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="duplicate", url_name="duplicate")
     def duplicate_ledger(self, request: HttpRequest, pk: int) -> Response:
