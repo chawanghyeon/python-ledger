@@ -14,4 +14,4 @@ class MonthlyBudget(models.Model):
         unique_together = ("user", "year", "month")
 
     def __str__(self):
-        return f"{self.year}-{self.month} Budget for user {self.user_id}"
+        return f"{self.year}-{self.month} Budget for user {self.user.id}"

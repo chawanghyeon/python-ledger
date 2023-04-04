@@ -1,1 +1,43 @@
-# Create your tests here.
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from monthly_budgets.models import MonthlyBudget
+from users.models import User
+
+
+class MonthlyBudgetViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            username="user1@user1.com", password="user1_password"
+        )
+
+        self.user1_token = RefreshToken.for_user(self.user1)
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {self.user1_token.access_token}"
+        )
+
+        self.monthly_budget1 = MonthlyBudget.objects.create(
+            user=self.user1, year=2023, month=4, budget=1000
+        )
+
+        self.monthly_budget_data = {
+            "year": 2023,
+            "month": 4,
+            "budget": 1000,
+        }
+
+    def test_create_monthly_budget(self):
+        MonthlyBudget.objects.all().delete()
+        response = self.client.post(
+            reverse("monthly-budgets-list"), self.monthly_budget_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            MonthlyBudget.objects.filter(
+                user=self.user1,
+                year=self.monthly_budget_data["year"],
+                month=self.monthly_budget_data["month"],
+            ).exists()
+        )
