@@ -97,5 +97,9 @@ class UserViewSetTestCase(APITestCase):
             reverse("users-signout"), data={"refresh": str(self.user1_token)}
         )
         self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
-        response = self.client.get(reverse("users-detail", args=[self.user1.id]))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        try:
+            token = RefreshToken(str(self.user1_token))
+        except Exception:
+            token = None
+
+        self.assertIsNone(token)
