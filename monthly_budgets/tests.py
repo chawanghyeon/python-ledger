@@ -54,3 +54,17 @@ class MonthlyBudgetViewSetTestCase(APITestCase):
         self.assertEqual(response.data["year"], self.monthly_budget1.year)
         self.assertEqual(response.data["month"], self.monthly_budget1.month)
         self.assertEqual(response.data["budget"], f"{self.monthly_budget1.budget:.2f}")
+
+    def test_update_monthly_budget(self):
+        new_budget = 2000
+        response = self.client.patch(
+            reverse(
+                "monthly-budgets-detail",
+                args=[self.monthly_budget1.id],
+            ),
+            {"budget": new_budget, "year": 2023, "month": 3},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["year"], 2023)
+        self.assertEqual(response.data["month"], 3)
+        self.assertEqual(response.data["budget"], f"{new_budget:.2f}")
