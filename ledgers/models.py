@@ -32,3 +32,6 @@ class SharedLedger(models.Model):
 
     def is_expired(self):
         return datetime.datetime.now() > self.expires_at
+
+    def __str__(self):
+        return str(self.token)

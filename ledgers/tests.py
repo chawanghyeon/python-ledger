@@ -111,4 +111,11 @@ class LedgerViewSetTestCase(APITestCase):
     def test_share_ledger(self):
         response = self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print(response.data)
+        self.assertTrue(response.data["url"])
+
+    def test_retrieve_shared_ledger(self):
+        response = self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
+        self.client.credentials()
+        response = self.client.get(response.data["url"])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], self.ledger1.name)

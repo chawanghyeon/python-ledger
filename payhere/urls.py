@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from custom_types.views import CustomTypeViewSet
-from ledgers.views import LedgerViewSet
+from ledgers.views import LedgerViewSet, SharedLedgerViewSet
 from monthly_budgets.views import MonthlyBudgetViewSet
 from users.views import UserViewSet
 
@@ -22,6 +22,11 @@ router.register("ledgers", LedgerViewSet, basename="ledgers")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    path(
+        "<str:token>",
+        SharedLedgerViewSet.as_view({"get": "retrieve"}),
+        name="shared-ledger",
+    ),
 ]
 
 # swagger

@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from datetime import timedelta
 
 from django.http import HttpRequest
@@ -7,6 +8,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from ledgers.base62 import base62_decode, base62_encode
 from ledgers.models import Ledger, SharedLedger
 from ledgers.serializers import LedgerSerializer
 from monthly_budgets.models import MonthlyBudget
@@ -88,15 +90,20 @@ class LedgerViewSet(viewsets.ModelViewSet):
             ledger=ledger, expires_at=expiration_date
         )
 
+        encoded_token = base62_encode(shared_ledger.token.int)
+
         share_url = request.build_absolute_uri(
-            reverse("ledgers-shared") + f"?token={shared_ledger.token}"
+            reverse("shared-ledger", args=[encoded_token])
         )
 
         return Response({"url": share_url}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="shared", url_name="shared")
-    def get_shared_ledger(self, request: HttpRequest) -> Response:
-        token = request.query_params["token"]
+
+class SharedLedgerViewSet(viewsets.ViewSet):
+    permission_classes = []
+
+    def retrieve(self, request: HttpRequest, token: str) -> Response:
+        token = uuid.UUID(int=base62_decode(token))
         shared_ledger = SharedLedger.objects.get(token=token)
 
         if shared_ledger.is_expired():
