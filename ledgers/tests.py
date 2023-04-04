@@ -153,3 +153,8 @@ class LedgerViewSetTestCase(APITestCase):
         self.client.credentials()
         response = self.client.get(reverse("ledgers-list"))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_monthly_ledgers_without_authentication(self):
+        self.client.credentials()
+        response = self.client.get(reverse("ledgers-date"), {"year": 2023, "month": 3})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
