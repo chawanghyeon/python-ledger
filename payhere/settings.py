@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost"]
 
+# slash
+APPEND_SLASH = False
 
 # Application definition
 # 기본 앱
