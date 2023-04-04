@@ -26,6 +26,7 @@ class Ledger(models.Model):
 
 class SharedLedger(models.Model):
     token = models.UUIDField(default=uuid.uuid4, unique=True)
+    encoded_token = models.CharField(max_length=100, unique=True, blank=True)
     ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
