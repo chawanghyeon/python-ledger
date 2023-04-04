@@ -125,3 +125,8 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.delete(reverse("ledgers-share", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(SharedLedger.objects.count(), 0)
+
+    def test_create_ledger_without_authentication(self):
+        self.client.credentials()
+        response = self.client.post(reverse("ledgers-list"), self.ledger_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
