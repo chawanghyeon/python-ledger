@@ -1,3 +1,6 @@
+import datetime
+import uuid
+
 from django.db import models
 
 from custom_types.models import CustomType
@@ -19,3 +22,13 @@ class Ledger(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class SharedLedger(models.Model):
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    expires_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return datetime.datetime.now() > self.expires_at

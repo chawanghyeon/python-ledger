@@ -1,3 +1,5 @@
+import uuid
+
 from django.http import HttpRequest
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -74,3 +76,11 @@ class LedgerViewSet(viewsets.ModelViewSet):
         serializer.save(user=request.user, type_id=ledger.type_id)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path="share", url_name="share")
+    def share_ledger(self, request: HttpRequest, pk: int) -> Response:
+        ledger = Ledger.objects.get(id=pk)
+        share_id = uuid.uuid4()
+        ledger.share(share_id)
+        share_url = request.build_absolute_uri(f"/api/shared-ledgers/{share_id}/")
+        return Response({"url": share_url}, status=status.HTTP_200_OK)

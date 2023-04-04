@@ -52,7 +52,6 @@ class LedgerViewSetTestCase(APITestCase):
     def test_retrieve_ledger(self):
         response = self.client.get(reverse("ledgers-detail", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print(response.data)
         self.assertEqual(response.data["name"], self.ledger1.name)
 
     def test_update_ledger(self):
