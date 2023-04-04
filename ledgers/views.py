@@ -1,5 +1,6 @@
 from django.http import HttpRequest
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ledgers.models import Ledger
@@ -19,6 +20,25 @@ class LedgerViewSet(viewsets.ModelViewSet):
 
     def list(self, request: HttpRequest) -> Response:
         queryset = Ledger.objects.filter(user=request.user).order_by("-date", "-id")
+
+        paginator = self.paginator
+        paginator.ordering = "-date", "-id"
+        page = paginator.paginate_queryset(queryset, request)
+
+        if page is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = LedgerSerializer(page, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="date", url_name="date")
+    def get_monthly_ledgers(self, request: HttpRequest) -> Response:
+        queryset = Ledger.objects.filter(
+            user=request.user,
+            date__year=request.query_params["year"],
+            date__month=request.query_params["month"],
+        ).order_by("-date", "-id")
 
         paginator = self.paginator
         paginator.ordering = "-date", "-id"

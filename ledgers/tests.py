@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from custom_types.models import CustomType
 from ledgers.models import Ledger
+from monthly_budgets.models import MonthlyBudget
 from users.models import User
 
 
@@ -31,6 +32,13 @@ class LedgerViewSetTestCase(APITestCase):
         }
 
         self.ledger1 = Ledger.objects.create(**self.ledger_data)
+
+        MonthlyBudget.objects.create(
+            user=self.user1,
+            year=2023,
+            month=4,
+            budget=10000,
+        )
 
     def test_create_ledger(self):
         Ledger.objects.all().delete()
@@ -75,3 +83,18 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.get(reverse("ledgers-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 5)
+
+    def test_get_monthly_ledgers(self):
+        for i in range(1, 4):
+            Ledger.objects.create(
+                user=self.user1,
+                name=f"ledger{i}",
+                memo=f"memo{i}",
+                amount=i * 1000,
+                type=self.type1,
+                date="2023-03-04",
+            )
+
+        response = self.client.get(reverse("ledgers-date"), {"year": 2023, "month": 3})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 3)
