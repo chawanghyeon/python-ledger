@@ -4,10 +4,12 @@ from users.models import User
 
 
 class CustomType(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
+        unique_together = ["name", "user"]
         ordering = ["name"]
 
     def __str__(self):
