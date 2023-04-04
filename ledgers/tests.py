@@ -45,3 +45,13 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.get(reverse("ledgers-detail", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.ledger1.name)
+
+    def test_update_ledger(self):
+        response = self.client.patch(
+            reverse("ledgers-detail", args=[self.ledger1.id]),
+            {"name": "ledger2", "memo": "memo2", "amount": 2000},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], "ledger2")
+        self.assertEqual(response.data["memo"], "memo2")
+        self.assertEqual(response.data["amount"], f"{2000:.2f}")
