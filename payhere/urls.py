@@ -27,6 +27,13 @@ urlpatterns = [
         SharedLedgerViewSet.as_view({"get": "retrieve"}),
         name="shared-ledger",
     ),
+    path(
+        "api/ledgers/<int:pk>/share",
+        LedgerViewSet.as_view(
+            {"post": "share_ledger", "delete": "delete_shared_ledger"}
+        ),
+        name="ledgers-share",
+    ),
 ]
 
 # swagger

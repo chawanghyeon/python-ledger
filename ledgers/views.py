@@ -98,6 +98,13 @@ class LedgerViewSet(viewsets.ModelViewSet):
 
         return Response({"url": share_url}, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["delete"], url_path="share", url_name="share")
+    def delete_shared_ledger(self, request: HttpRequest, pk: int) -> Response:
+        ledger = Ledger.objects.get(id=pk)
+        SharedLedger.objects.filter(ledger=ledger).delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class SharedLedgerViewSet(viewsets.ViewSet):
     permission_classes = []

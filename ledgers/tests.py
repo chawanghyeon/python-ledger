@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from custom_types.models import CustomType
-from ledgers.models import Ledger
+from ledgers.models import Ledger, SharedLedger
 from monthly_budgets.models import MonthlyBudget
 from users.models import User
 
@@ -119,3 +119,9 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.get(response.data["url"])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.ledger1.name)
+
+    def test_delete_shared_ledger(self):
+        self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
+        response = self.client.delete(reverse("ledgers-share", args=[self.ledger1.id]))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(SharedLedger.objects.count(), 0)
