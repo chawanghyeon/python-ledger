@@ -135,3 +135,11 @@ class LedgerViewSetTestCase(APITestCase):
         self.client.credentials()
         response = self.client.get(reverse("ledgers-detail", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_update_ledger_without_authentication(self):
+        self.client.credentials()
+        response = self.client.patch(
+            reverse("ledgers-detail", args=[self.ledger1.id]),
+            {"name": "ledger2", "memo": "memo2", "amount": 2000},
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
