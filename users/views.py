@@ -6,6 +6,8 @@ from django.http import HttpRequest
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from rest_framework_simplejwt.tokens import UntypedToken
@@ -30,7 +32,13 @@ class UserViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_201_CREATED)
 
     def retrieve(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
-        user = request.user
+        jwt_auth = JWTAuthentication()
+
+        try:
+            user, jwt = jwt_auth.authenticate(request)
+        except Exception:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = UserSerializer(user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -70,7 +78,11 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"], url_name="signout")
     def signout(self, request: HttpRequest) -> Response:
         raw_token = request.META.get("HTTP_AUTHORIZATION").split(" ")[1]
-        json_token_id = UntypedToken(raw_token)["jti"]
+
+        try:
+            json_token_id = UntypedToken(raw_token)["jti"]
+        except TokenError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         BlacklistedToken.objects.create(jti=json_token_id)
 

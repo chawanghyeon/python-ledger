@@ -23,9 +23,21 @@ class UserViewSetTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {user1_token}")
 
     def test_create_user(self):
+        User.objects.all().delete()
+        self.client.credentials()
         response = self.client.post(reverse("users-list"), self.user_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(
+            User.objects.filter(username=self.user_data["username"]).exists()
+        )
+
+    def test_create_user_wrong_username(self):
+        User.objects.all().delete()
+        self.client.credentials()
+        self.user_data["username"] = "wrongusername"
+        response = self.client.post(reverse("users-list"), self.user_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(
             User.objects.filter(username=self.user_data["username"]).exists()
         )
 
@@ -38,7 +50,6 @@ class UserViewSetTestCase(APITestCase):
         self.assertTrue(response.data["user"]["username"], self.user_data["username"])
 
     def test_signin_wrong_credentials(self):
-        User.objects.create_user(**self.user_data)
         self.user_data["password"] = "wrongpassword"
         response = self.client.post(reverse("users-signin"), self.user_data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -64,4 +75,17 @@ class UserViewSetTestCase(APITestCase):
             reverse("users-detail", args=[self.user1.id]), {"password": "wrongpassword"}
         )
 
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_retrieve_user_without_authentication(self):
+        self.client.credentials()
+        response = self.client.get(reverse("users-detail", args=[self.user1.id]))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_destroy_user_without_authentication(self):
+        self.client.credentials()
+        response = self.client.delete(
+            reverse("users-detail", args=[self.user1.id]),
+            {"password": "user1_password"},
+        )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
