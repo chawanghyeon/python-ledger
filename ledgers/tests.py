@@ -55,3 +55,8 @@ class LedgerViewSetTestCase(APITestCase):
         self.assertEqual(response.data["name"], "ledger2")
         self.assertEqual(response.data["memo"], "memo2")
         self.assertEqual(response.data["amount"], f"{2000:.2f}")
+
+    def test_delete_ledger(self):
+        response = self.client.delete(reverse("ledgers-detail", args=[self.ledger1.id]))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Ledger.objects.count(), 0)
