@@ -115,3 +115,13 @@ class MonthlyBudgetViewSetTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertFalse(MonthlyBudget.objects.exists())
+
+    def test_retrieve_monthly_budget_without_authentication(self):
+        self.client.credentials()
+        response = self.client.get(
+            reverse(
+                "monthly-budgets-detail",
+                args=[self.monthly_budget1.id],
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
