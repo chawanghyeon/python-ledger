@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -118,6 +120,16 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.get(response.data["url"])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.ledger1.name)
+
+    def test_retrieve_expired_shared_ledger(self):
+        response = self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
+        self.client.credentials()
+
+        SharedLedger.objects.filter(ledger_id=self.ledger1.id).update(
+            expires_at=datetime.now()
+        )
+        response = self.client.get(response.data["url"])
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_shared_ledger(self):
         self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
