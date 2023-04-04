@@ -7,10 +7,8 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
-from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import User
 from users.serializers import UserSerializer
@@ -77,13 +75,7 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"], url_name="signout")
     def signout(self, request: HttpRequest) -> Response:
-        raw_token = request.META.get("HTTP_AUTHORIZATION").split(" ")[1]
+        token = RefreshToken(request.data.get("refresh"))
+        token.blacklist()
 
-        try:
-            json_token_id = UntypedToken(raw_token)["jti"]
-        except TokenError:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        BlacklistedToken.objects.create(jti=json_token_id)
-
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_205_RESET_CONTENT)

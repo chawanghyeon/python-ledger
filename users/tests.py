@@ -19,8 +19,10 @@ class UserViewSetTestCase(APITestCase):
             "is_active": "True",
         }
 
-        user1_token = RefreshToken.for_user(self.user1).access_token
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {user1_token}")
+        self.user1_token = RefreshToken.for_user(self.user1)
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {self.user1_token.access_token}"
+        )
 
     def test_create_user(self):
         User.objects.all().delete()
@@ -88,4 +90,12 @@ class UserViewSetTestCase(APITestCase):
             reverse("users-detail", args=[self.user1.id]),
             {"password": "user1_password"},
         )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_signout(self):
+        response = self.client.post(
+            reverse("users-signout"), data={"refresh": str(self.user1_token)}
+        )
+        self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
+        response = self.client.get(reverse("users-detail", args=[self.user1.id]))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
