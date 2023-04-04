@@ -68,3 +68,19 @@ class MonthlyBudgetViewSetTestCase(APITestCase):
         self.assertEqual(response.data["year"], 2023)
         self.assertEqual(response.data["month"], 3)
         self.assertEqual(response.data["budget"], f"{new_budget:.2f}")
+
+    def test_delete_monthly_budget(self):
+        response = self.client.delete(
+            reverse(
+                "monthly-budgets-detail",
+                args=[self.monthly_budget1.id],
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            MonthlyBudget.objects.filter(
+                user=self.user1,
+                year=self.monthly_budget1.year,
+                month=self.monthly_budget1.month,
+            ).exists()
+        )
