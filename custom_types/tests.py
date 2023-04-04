@@ -39,7 +39,7 @@ class CustomTypeViewSetTestCase(APITestCase):
         response = self.client.get(
             reverse(
                 "custom-types-detail",
-                args=[self.custom_type1.name],
+                args=[self.custom_type1.id],
             )
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -49,7 +49,7 @@ class CustomTypeViewSetTestCase(APITestCase):
         response = self.client.patch(
             reverse(
                 "custom-types-detail",
-                args=[self.custom_type1.name],
+                args=[self.custom_type1.id],
             ),
             {"name": "test2"},
         )
@@ -60,7 +60,7 @@ class CustomTypeViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 "custom-types-detail",
-                args=[self.custom_type1.name],
+                args=[self.custom_type1.id],
             )
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -94,7 +94,7 @@ class CustomTypeViewSetTestCase(APITestCase):
         response = self.client.get(
             reverse(
                 "custom-types-detail",
-                args=[self.custom_type1.name],
+                args=[self.custom_type1.id],
             )
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -104,7 +104,7 @@ class CustomTypeViewSetTestCase(APITestCase):
         response = self.client.patch(
             reverse(
                 "custom-types-detail",
-                args=[self.custom_type1.name],
+                args=[self.custom_type1.id],
             ),
             {"name": "test2"},
         )
@@ -115,7 +115,7 @@ class CustomTypeViewSetTestCase(APITestCase):
         response = self.client.delete(
             reverse(
                 "custom-types-detail",
-                args=[self.custom_type1.name],
+                args=[self.custom_type1.id],
             )
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
