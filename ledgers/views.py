@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from ledgers.models import Ledger
 from ledgers.serializers import LedgerSerializer
+from monthly_budgets.models import MonthlyBudget
 
 
 class LedgerViewSet(viewsets.ModelViewSet):
@@ -34,10 +35,13 @@ class LedgerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="date", url_name="date")
     def get_monthly_ledgers(self, request: HttpRequest) -> Response:
+        year = request.query_params["year"]
+        month = request.query_params["month"]
+
         queryset = Ledger.objects.filter(
             user=request.user,
-            date__year=request.query_params["year"],
-            date__month=request.query_params["month"],
+            date__year=year,
+            date__month=month,
         ).order_by("-date", "-id")
 
         paginator = self.paginator
@@ -48,5 +52,13 @@ class LedgerViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         serializer = LedgerSerializer(page, many=True)
+        data = paginator.get_paginated_response(serializer.data)
 
-        return paginator.get_paginated_response(serializer.data)
+        monthly_budget = MonthlyBudget.objects.filter(
+            user=request.user, year=year, month=month
+        ).first()
+
+        if monthly_budget:
+            data.data["monthly_budget"] = monthly_budget.budget
+
+        return data
