@@ -5,6 +5,6 @@ from ledgers.models import Ledger
 
 class LedgerSerializer(ModelSerializer):
     class Meta:
-        fields = "__all__"
+        exclude = ("user",)
         model = Ledger
         depth = 1
