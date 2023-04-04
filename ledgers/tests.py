@@ -107,3 +107,8 @@ class LedgerViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Ledger.objects.count(), 2)
         self.assertEqual(response.data["name"], "ledger1")
+
+    def test_share_ledger(self):
+        response = self.client.post(reverse("ledgers-share", args=[self.ledger1.id]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.data)
