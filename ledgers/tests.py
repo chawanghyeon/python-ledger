@@ -60,3 +60,18 @@ class LedgerViewSetTestCase(APITestCase):
         response = self.client.delete(reverse("ledgers-detail", args=[self.ledger1.id]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Ledger.objects.count(), 0)
+
+    def test_list_ledger(self):
+        for i in range(1, 10):
+            Ledger.objects.create(
+                user=self.user1,
+                name=f"ledger{i}",
+                memo=f"memo{i}",
+                amount=i * 1000,
+                type=self.type1,
+                date="2023-04-04",
+            )
+
+        response = self.client.get(reverse("ledgers-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 5)

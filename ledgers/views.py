@@ -16,3 +16,17 @@ class LedgerViewSet(viewsets.ModelViewSet):
         serializer.save(user=request.user, type_id=request.data["type_id"])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def list(self, request: HttpRequest) -> Response:
+        queryset = Ledger.objects.filter(user=request.user).order_by("-date", "-id")
+
+        paginator = self.paginator
+        paginator.ordering = "-date", "-id"
+        page = paginator.paginate_queryset(queryset, request)
+
+        if page is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = LedgerSerializer(page, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
