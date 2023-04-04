@@ -84,3 +84,16 @@ class MonthlyBudgetViewSetTestCase(APITestCase):
                 month=self.monthly_budget1.month,
             ).exists()
         )
+
+    def test_list_monthly_budgets(self):
+        for i in range(7):
+            MonthlyBudget.objects.create(
+                user=self.user1,
+                year=self.monthly_budget1.year,
+                month=self.monthly_budget1.month + i + 1,
+                budget=self.monthly_budget1.budget,
+            )
+
+        response = self.client.get(reverse("monthly-budgets-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 5)
