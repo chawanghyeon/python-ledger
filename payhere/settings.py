@@ -51,6 +51,7 @@ INSTALLED_APPS += [
     "ledgers.apps.LedgersConfig",
     "custom_types.apps.CustomTypesConfig",
     "monthly_budgets.apps.MonthlyBudgetsConfig",
+    "drf_spectacular",
 ]
 
 # 기본 미들웨어

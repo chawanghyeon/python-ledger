@@ -13,26 +13,26 @@ from ledgers.views import LedgerViewSet, SharedLedgerViewSet
 from monthly_budgets.views import MonthlyBudgetViewSet
 from users.views import UserViewSet
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register("users", UserViewSet, basename="users")
 router.register("monthly-budgets", MonthlyBudgetViewSet, basename="monthly-budgets")
 router.register("custom-types", CustomTypeViewSet, basename="custom-types")
 router.register("ledgers", LedgerViewSet, basename="ledgers")
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),
-    path(
-        "<str:token>",
-        SharedLedgerViewSet.as_view({"get": "retrieve"}),
-        name="shared-ledger",
-    ),
+    path("admin", admin.site.urls),
     path(
         "api/ledgers/<int:pk>/share",
         LedgerViewSet.as_view(
             {"post": "share_ledger", "delete": "delete_shared_ledger"}
         ),
         name="ledgers-share",
+    ),
+    path("api/", include(router.urls)),
+    path(
+        "<str:token>",
+        SharedLedgerViewSet.as_view({"get": "retrieve"}),
+        name="shared-ledger",
     ),
 ]
 

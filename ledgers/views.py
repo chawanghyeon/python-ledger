@@ -100,6 +100,8 @@ class LedgerViewSet(viewsets.ModelViewSet):
 
 
 class SharedLedgerViewSet(viewsets.ViewSet):
+    queryset = SharedLedger.objects.all()
+    serializer_class = LedgerSerializer
     permission_classes = []
 
     def retrieve(self, request: HttpRequest, token: str) -> Response:
