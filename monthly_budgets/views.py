@@ -11,6 +11,13 @@ class MonthlyBudgetViewSet(viewsets.ModelViewSet):
     serializer_class = MonthlyBudgetSerializer
 
     def create(self, request: HttpRequest) -> Response:
+        if MonthlyBudget.objects.filter(
+            user=request.user,
+            year=request.data["year"],
+            month=request.data["month"],
+        ).exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         serializer = MonthlyBudgetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
