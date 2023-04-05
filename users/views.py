@@ -7,7 +7,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import User
@@ -60,15 +59,19 @@ class UserViewSet(viewsets.ViewSet):
             "password": request.data.get("password"),
         }
 
-        token = TokenObtainPairSerializer().validate(data)
         user = authenticate(**data)
+
+        if user is None:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        token = RefreshToken.for_user(user)
         serializer = UserSerializer(user)
 
         return Response(
             {
                 "user": serializer.data,
                 "message": "Login successfully",
-                "token": {"refresh": token["refresh"], "access": token["access"]},
+                "token": {"refresh": str(token), "access": str(token.access_token)},
             },
             status=status.HTTP_200_OK,
         )

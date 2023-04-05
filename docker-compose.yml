@@ -1,0 +1,53 @@
+version: '3.8'
+
+networks:
+  front-connection:
+    driver: bridge
+  db-connection:
+    driver: bridge
+
+services:
+  nginx:
+    container_name: nginx_payhere
+    image: nginx
+    restart: always
+    ports: 
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - front-connection
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - web
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: payhere
+      MYSQL_USER: payhere
+      MYSQL_PASSWORD: payhere
+      MYSQL_ROOT_PASSWORD: rootpassword
+    expose:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - db-connection
+  web:
+    image: payhere:latest
+    command: gunicorn payhere.wsgi:application --workers=4 --bind 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    networks:
+      - front-connection
+      - db-connection
+      
+volumes:
+  postgres_data:

@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-75^%&3v30%gyhm@=i$*ezm#=1jk&2(cchfzxrq3%ctcfm+aia3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0"]
 
 # slash
 APPEND_SLASH = False
@@ -95,6 +95,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "payhere",
+#         "USER": "payhere",
+#         "PASSWORD": "payhere",
+#         "HOST": "db",
+#         "PORT": "3306",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
