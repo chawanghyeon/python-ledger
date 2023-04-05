@@ -14,7 +14,7 @@ class CustomTypeViewSet(viewsets.ModelViewSet):
         if CustomType.objects.filter(
             user=request.user, name=request.data["name"]
         ).exists():
-            return Response(status=status.HTTP_400_CONFLICT)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = CustomTypeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
