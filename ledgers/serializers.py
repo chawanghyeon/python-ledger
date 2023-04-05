@@ -7,4 +7,3 @@ class LedgerSerializer(ModelSerializer):
     class Meta:
         exclude = ("user",)
         model = Ledger
-        depth = 1
