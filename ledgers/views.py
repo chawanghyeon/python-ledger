@@ -41,8 +41,8 @@ class LedgerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="date", url_name="date")
     def get_monthly_ledgers(self, request: HttpRequest) -> Response:
-        year = request.query_params["year"]
-        month = request.query_params["month"]
+        year = request.query_params.get("year")
+        month = request.query_params.get("month")
 
         queryset = Ledger.objects.filter(
             user=request.user,
@@ -66,14 +66,19 @@ class LedgerViewSet(viewsets.ModelViewSet):
         self, request: HttpRequest, pk: Optional[str] = None
     ) -> Response:
         ledger = Ledger.objects.get(id=pk)
-        ledger.pk = None
 
-        serializer = LedgerSerializer(ledger)
-        serializer = LedgerSerializer(data=serializer.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user, type_id=ledger.type.id)
+        new_ledger = Ledger.objects.create(
+            user=request.user,
+            type=ledger.type,
+            name=ledger.name,
+            memo=ledger.memo,
+            amount=ledger.amount,
+            date=ledger.date,
+        )
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            LedgerSerializer(new_ledger).data, status=status.HTTP_201_CREATED
+        )
 
     @action(detail=True, methods=["post"], url_path="share", url_name="share")
     def share_ledger(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
