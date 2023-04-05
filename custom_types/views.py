@@ -11,6 +11,11 @@ class CustomTypeViewSet(viewsets.ModelViewSet):
     serializer_class = CustomTypeSerializer
 
     def create(self, request: HttpRequest) -> Response:
+        if CustomType.objects.filter(
+            user=request.user, name=request.data["name"]
+        ).exists():
+            return Response(status=status.HTTP_400_CONFLICT)
+
         serializer = CustomTypeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
