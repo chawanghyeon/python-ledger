@@ -37,7 +37,7 @@ services:
     networks:
       - db-connection
   web:
-    image: payhere:latest
+    image: chawanghyeon/payhere:latest
     command: gunicorn payhere.wsgi:application --workers=4 --bind 0.0.0.0:8000
     volumes:
       - .:/usr/src/app
