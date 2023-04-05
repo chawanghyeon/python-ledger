@@ -10,10 +10,10 @@ from users.models import User
 class Ledger(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.ForeignKey(CustomType, on_delete=models.PROTECT)
     name = models.CharField(max_length=50)
     memo = models.CharField(max_length=100, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    type = models.ForeignKey(CustomType, on_delete=models.PROTECT)
     date = models.DateField()
 
     class Meta:
@@ -25,6 +25,7 @@ class Ledger(models.Model):
 
 
 class SharedLedger(models.Model):
+    id = models.BigAutoField(primary_key=True)
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     encoded_token = models.CharField(max_length=100, unique=True, blank=True)
     ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)

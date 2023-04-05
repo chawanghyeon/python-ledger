@@ -10,19 +10,15 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("custom_types", "0001_initial"),
+        ("ledgers", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="customtype",
+            model_name="ledger",
             name="user",
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
             ),
-        ),
-        migrations.AlterUniqueTogether(
-            name="customtype",
-            unique_together={("name", "user")},
         ),
     ]
