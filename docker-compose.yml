@@ -49,5 +49,3 @@ services:
       - front-connection
       - db-connection
       
-volumes:
-  postgres_data:
