@@ -57,7 +57,7 @@ class UserViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_retrieve_user(self):
-        response = self.client.get(reverse("users-detail", args=[self.user1.id]))
+        response = self.client.get(reverse("users-me"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         serializer = UserSerializer(self.user1)
@@ -81,7 +81,7 @@ class UserViewSetTestCase(APITestCase):
 
     def test_retrieve_user_without_authentication(self):
         self.client.credentials()
-        response = self.client.get(reverse("users-detail", args=[self.user1.id]))
+        response = self.client.get(reverse("users-me"))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_destroy_user_without_authentication(self):

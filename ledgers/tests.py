@@ -44,9 +44,8 @@ class LedgerViewSetTestCase(APITestCase):
 
     def test_create_ledger(self):
         Ledger.objects.all().delete()
-        response = self.client.post(
-            reverse("ledgers-list"), self.ledger_data, format="json"
-        )
+        self.ledger_data["type"] = self.type1.id
+        response = self.client.post(reverse("ledgers-list"), self.ledger_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Ledger.objects.count(), 1)
         self.assertEqual(response.data["name"], "ledger1")

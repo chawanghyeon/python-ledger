@@ -1,5 +1,6 @@
 import datetime
 from datetime import timedelta
+from typing import Optional
 
 from django.http import HttpRequest
 from django.urls import reverse
@@ -61,19 +62,21 @@ class LedgerViewSet(viewsets.ModelViewSet):
         return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="duplicate", url_name="duplicate")
-    def duplicate_ledger(self, request: HttpRequest, pk: int) -> Response:
+    def duplicate_ledger(
+        self, request: HttpRequest, pk: Optional[str] = None
+    ) -> Response:
         ledger = Ledger.objects.get(id=pk)
         ledger.pk = None
 
         serializer = LedgerSerializer(ledger)
         serializer = LedgerSerializer(data=serializer.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user, type_id=ledger.type_id)
+        serializer.save(user=request.user, type_id=ledger.type.id)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path="share", url_name="share")
-    def share_ledger(self, request: HttpRequest, pk: int) -> Response:
+    def share_ledger(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
         ledger = Ledger.objects.get(id=pk)
         expiration_date = datetime.datetime.now() + timedelta(days=1)
         shared_ledger = SharedLedger.objects.create(
@@ -92,7 +95,9 @@ class LedgerViewSet(viewsets.ModelViewSet):
         return Response({"url": share_url}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["delete"], url_path="share", url_name="share")
-    def delete_shared_ledger(self, request: HttpRequest, pk: int) -> Response:
+    def delete_shared_ledger(
+        self, request: HttpRequest, pk: Optional[str] = None
+    ) -> Response:
         ledger = Ledger.objects.get(id=pk)
         SharedLedger.objects.filter(ledger=ledger).delete()
 

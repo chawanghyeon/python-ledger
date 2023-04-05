@@ -6,7 +6,6 @@ from django.http import HttpRequest
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import User
@@ -28,15 +27,12 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
-        jwt_auth = JWTAuthentication()
-
-        try:
-            user, jwt = jwt_auth.authenticate(request)
-        except Exception:
+    @action(detail=False, methods=["get"], url_name="me")
+    def retrieve_me(self, request: HttpRequest) -> Response:
+        if request.user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(request.user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
