@@ -21,7 +21,7 @@ class LedgerViewSet(viewsets.ModelViewSet):
     def create(self, request: HttpRequest) -> Response:
         serializer = LedgerSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user, type_id=request.data["type_id"])
+        serializer.save(user=request.user, type_id=request.data["type"])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
