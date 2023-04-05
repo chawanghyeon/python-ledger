@@ -69,7 +69,7 @@ class UserViewSetTestCase(APITestCase):
             {"password": "user1_password"},
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(User.objects.filter(username="testuser").exists())
 
     def test_destroy_user_wrong_password(self):
