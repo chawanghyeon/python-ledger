@@ -2,14 +2,14 @@
 
 효율적이고 유연한 구조로, 각 테이블 간의 관계를 명확하게 설계했습니다. 사용자 인증 및 권한 관리를 효과적으로 수행하며, 가계부 및 예산 정보를 사용자 별로 관리할 수 있습니다. 이로써 사용자가 원활하게 서비스를 이용하고 시스템 확장 및 유지보수가 용이 해집니다.
 
-- User: 사용자 정보(Django의 AbstractUser상속)
+- `User`: 사용자 정보(Django의 AbstractUser상속)
     - id (PK): 사용자 식별자
     - username: 이메일 (unique, 이메일로 회원가입)
-- CustomType: 사용자 정의 지출 유형
+- `CustomType`: 사용자 정의 지출 유형
     - id (PK): 지출 유형 식별자
     - user_id (FK): 사용자 식별자
     - name : 지출 유형 이름
-- Ledger: 가계부 정보
+- `Ledger`: 가계부 정보
     - id (PK): 가계부 식별자
     - user_id (FK): 사용자 식별자
     - type_id (FK): 지출 유형
@@ -17,13 +17,13 @@
     - memo: 가계부에 상세한 메모
     - amout: 지출 비용
     - date: 지출 날짜
-- SharedLedger: 공유된 가계부 정보
+- `SharedLedger`: 공유된 가계부 정보
     - id (PK): 공유된 가계부 식별자
     - ledger_id (FK): 가계부 식별자
     - token: uuid 토큰 (unique)
     - encoded_token: Base62로 인코딩된 토큰
     - expires_at: 만료되는 날짜
-- Monthly_budget:
+- `Monthly_budget`:
     - id (PK): 월 별 예산 식별자
     - user_id (FK): 사용자 식별자
     - year: 해당 연도
