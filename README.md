@@ -100,7 +100,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
         user = authenticate(**data)
         
         if user is None:
-        		return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         
         token = RefreshToken.for_user(user)
         ```
@@ -177,14 +177,14 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
                     return str(self.token)
             
             def retrieve(self, request: HttpRequest, token: str) -> Response:
-                    shared_ledger = SharedLedger.objects.get(encoded_token=token)
-            
-                    if shared_ledger.is_expired():
-                        return Response(status=status.HTTP_404_NOT_FOUND)
-            
-                    serializer = LedgerSerializer(shared_ledger.ledger)
-            
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+                shared_ledger = SharedLedger.objects.get(encoded_token=token)
+
+                if shared_ledger.is_expired():
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+
+                serializer = LedgerSerializer(shared_ledger.ledger)
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
             ```
             
     - 이러한 접근 방식을 통해 단축 URL 기능을 성공적으로 구현하였고, 이 과정에서 다양한 기술적 고려 사항을 다루게 되었습니다. 이 경험이 앞으로의 프로젝트에서도 도움이 될 것이라 생각합니다.
