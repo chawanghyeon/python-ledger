@@ -35,32 +35,32 @@
 RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인트 작성이 가능하고 각 리소스에 대해 적절한 HTTP 메서드를 사용합니다. 이를 통해 유지보수와 확장성이 증가하며, 개발자가 API를 쉽게 이해할 수 있습니다.
 
 - `User`: 사용자
-    - POST /api/users: 사용자 회원가입
-    - POST /api/users/signin: 사용자 로그인
-    - POST /api/users/signout: 사용자 로그아웃
-    - GET /api/users/me: 현재 로그인한 사용자의 정보 조회
+    - `POST /api/users`: 사용자 회원가입
+    - `POST /api/users/signin`: 사용자 로그인
+    - `POST /api/users/signout`: 사용자 로그아웃
+    - `GET /api/users/me`: 현재 로그인한 사용자의 정보 조회
 - `CustomType`: 사용자 정의 지출 유형
-    - GET /api/custom-types: 사용자가 추가한 모든 지출 유형 조회
-    - POST /api/custom-types: 새로운 지출 유형 추가
-    - PUT /api/custom-types/{name}: 지출 유형 수정
-    - DELETE /api/custom-types/{name}: 지출 유형 삭제
+    - `GET /api/custom-types`: 사용자가 추가한 모든 지출 유형 조회
+    - `POST /api/custom-types`: 새로운 지출 유형 추가
+    - `PUT /api/custom-types/{name}`: 지출 유형 수정
+    - `DELETE /api/custom-types/{name}`: 지출 유형 삭제
 - `Ledger`: 가계부
-    - GET /api/ledgers: 사용자의 가계부 목록 조회
-    - POST /api/ledgers: 새로운 가계부 항목 추가
-    - GET /api/ledgers/{id}: 특정 가계부 항목 조회
-    - PUT /api/ledgers/{id}: 특정 가계부 항목 수정
-    - DELETE /api/ledgers/{id}: 특정 가계부 항목 삭제
-    - POST /api/ledgers/{id}/duplicate: 특정 가계부 항목 복제
-    - POST /api/ledgers/{id}/share: 특정 가계부 항목 공유 URL 생성
-    - DELETE /api/ledgers/{id}/share: 특정 가계부 항목 공유 삭제
-    - GET /api/ledgers/date: 특정 연월의 가계부 목록 조회
-    - GET /{token}: 공유된 특정 가계부 항목 조회
+    - `GET /api/ledgers`: 사용자의 가계부 목록 조회
+    - `POST /api/ledgers`: 새로운 가계부 항목 추가
+    - `GET /api/ledgers/{id}`: 특정 가계부 항목 조회
+    - `PUT /api/ledgers/{id}`: 특정 가계부 항목 수정
+    - `DELETE /api/ledgers/{id}`: 특정 가계부 항목 삭제
+    - `POST /api/ledgers/{id}/duplicate`: 특정 가계부 항목 복제
+    - `POST /api/ledgers/{id}/share`: 특정 가계부 항목 공유 URL 생성
+    - `DELETE /api/ledgers/{id}/share`: 특정 가계부 항목 공유 삭제
+    - `GET /api/ledgers/date`: 특정 연월의 가계부 목록 조회
+    - `GET /{token}`: 공유된 특정 가계부 항목 조회
 - `MonthlyBudget`: 월별 예산
-    - GET /api/monthly-budgets: 사용자의 월별 예산 목록 조회
-    - POST /api/monthly-budgets: 새로운 월별 예산 추가
-    - GET /api/monthly-budgets/{id}: 특정 월별 예산 조회
-    - PUT /api/monthly-budgets/{id}: 특정 월별 예산 수정
-    - DELETE /api/monthly-budgets/{id}: 특정 월별 예산 삭제
+    - `GET /api/monthly-budgets`: 사용자의 월별 예산 목록 조회
+    - `POST /api/monthly-budgets`: 새로운 월별 예산 추가
+    - `GET /api/monthly-budgets/{id}`: 특정 월별 예산 조회
+    - `PUT /api/monthly-budgets/{id}`: 특정 월별 예산 수정
+    - `DELETE /api/monthly-budgets/{id}`: 특정 월별 예산 삭제
     
 
 ## 3. 아키텍쳐 설계
