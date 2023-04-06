@@ -194,7 +194,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     총 51개의 테스트 코드를 작성했습니다. 직접 테스트 해보는 방법은 다음과 같습니다. (m1 mac환경)
     
     ```bash
-    git clone [https://github.com/chawanghyeon/python-ledger.git](https://github.com/chawanghyeon/python-ledger.git)
+    git clone https://github.com/chawanghyeon/python-ledger.git
     ```
     
     프로젝트 루트 파일로 이동 후 아래 명령어를 실행합니다.
@@ -217,5 +217,5 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     web이 실행되고 있는 terminal에서 다음 명령어를 실행합니다.
     
     ```bash
-    python [manage.py](http://manage.py/) test --settings=payhere.settings.prod
+    python manage.py test --settings=payhere.settings.prod
     ```
