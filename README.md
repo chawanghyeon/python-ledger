@@ -39,6 +39,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     - `POST /api/users/signin`: 사용자 로그인
     - `POST /api/users/signout`: 사용자 로그아웃
     - `GET /api/users/me`: 현재 로그인한 사용자의 정보 조회
+    - `PATCH /api/users/password`: 현재 로그인한 유저의 패스워드 
 - `CustomType`: 사용자 정의 지출 유형
     - `GET /api/custom-types`: 사용자가 추가한 모든 지출 유형 조회
     - `POST /api/custom-types`: 새로운 지출 유형 추가
@@ -191,7 +192,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     
     ## 6. 테스트 방법
     
-    총 51개의 테스트 코드를 작성했습니다. 직접 테스트 해보는 방법은 다음과 같습니다. (m1 mac환경)
+    총 53개의 테스트 코드를 작성했습니다. 직접 테스트 해보는 방법은 다음과 같습니다. (m1 mac환경)
     
     ```bash
     git clone https://github.com/chawanghyeon/python-ledger.git
