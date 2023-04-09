@@ -63,6 +63,14 @@ class UserViewSetTestCase(APITestCase):
         serializer = UserSerializer(self.user1)
         self.assertEqual(response.data, serializer.data)
 
+    def test_update_password(self):
+        response = self.client.patch(
+            reverse("users-password"),
+            {"new_password": "newpassword", "old_password": "user1_password"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(User.objects.filter(username="user1@user1.com").exists())
+
     def test_destroy_user(self):
         response = self.client.delete(
             reverse("users-detail", args=[self.user1.id]),
@@ -70,7 +78,7 @@ class UserViewSetTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(User.objects.filter(username="testuser").exists())
+        self.assertFalse(User.objects.filter(username="user1@user1.com").exists())
 
     def test_destroy_user_wrong_password(self):
         response = self.client.delete(

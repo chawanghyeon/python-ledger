@@ -36,6 +36,20 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=["patch"], url_name="password")
+    def update_password(self, request: HttpRequest) -> Response:
+        user = authenticate(
+            username=request.user.username, password=request.data.get("old_password")
+        )
+
+        if user is None:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        user.password = make_password(request.data.get("new_password"))
+        user.save()
+
+        return Response(status=status.HTTP_200_OK)
+
     def destroy(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
         user = authenticate(
             username=request.user.username, password=request.data.get("password")
