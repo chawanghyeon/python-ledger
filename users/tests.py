@@ -92,6 +92,14 @@ class UserViewSetTestCase(APITestCase):
         response = self.client.get(reverse("users-me"))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_update_password_without_authentication(self):
+        self.client.credentials()
+        response = self.client.patch(
+            reverse("users-password"),
+            {"new_password": "newpassword", "old_password": "user1_password"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_destroy_user_without_authentication(self):
         self.client.credentials()
         response = self.client.delete(
