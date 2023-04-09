@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from payhere.security.password import decrypt_password
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -20,10 +21,9 @@ class UserViewSet(viewsets.ViewSet):
     def create(self, request: HttpRequest) -> Response:
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        password = decrypt_password(request.data.get("password"))
 
-        serializer.save(
-            password=make_password(request.data.get("password")), is_active=True
-        )
+        serializer.save(password=make_password(password), is_active=True)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -38,22 +38,21 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["patch"], url_path="password", url_name="password")
     def update_password(self, request: HttpRequest) -> Response:
-        user = authenticate(
-            username=request.user.username, password=request.data.get("old_password")
-        )
+        old_password = decrypt_password(request.data.get("old_password"))
+        user = authenticate(username=request.user.username, password=old_password)
 
         if user is None:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        user.password = make_password(request.data.get("new_password"))
+        new_password = decrypt_password(request.data.get("new_password"))
+        user.password = make_password(new_password)
         user.save()
 
         return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
-        user = authenticate(
-            username=request.user.username, password=request.data.get("password")
-        )
+        password = decrypt_password(request.data.get("password"))
+        user = authenticate(username=request.user.username, password=password)
 
         if user is None:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -64,10 +63,9 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"], url_name="signin")
     def signin(self, request: HttpRequest) -> Response:
-        data = {
-            "username": request.data.get("username"),
-            "password": request.data.get("password"),
-        }
+        password = decrypt_password(request.data.get("password"))
+        print(password)
+        data = {"username": request.data.get("username"), "password": password}
 
         user = authenticate(**data)
 

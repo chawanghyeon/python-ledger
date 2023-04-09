@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from payhere.security.password import encrypt_password
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -15,7 +16,7 @@ class UserViewSetTestCase(APITestCase):
 
         self.user_data = {
             "username": "user1@user1.com",
-            "password": "user1_password",
+            "password": encrypt_password("user1_password"),
             "is_active": "True",
         }
 
@@ -52,7 +53,7 @@ class UserViewSetTestCase(APITestCase):
         self.assertTrue(response.data["user"]["username"], self.user_data["username"])
 
     def test_signin_wrong_credentials(self):
-        self.user_data["password"] = "wrongpassword"
+        self.user_data["password"] = encrypt_password("wrong_password")
         response = self.client.post(reverse("users-signin"), self.user_data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -64,17 +65,18 @@ class UserViewSetTestCase(APITestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_update_password(self):
-        response = self.client.patch(
-            reverse("users-password"),
-            {"new_password": "newpassword", "old_password": "user1_password"},
-        )
+        data = {
+            "new_password": encrypt_password("newpassword"),
+            "old_password": encrypt_password("user1_password"),
+        }
+        response = self.client.patch(reverse("users-password"), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(User.objects.filter(username="user1@user1.com").exists())
 
     def test_destroy_user(self):
         response = self.client.delete(
             reverse("users-detail", args=[self.user1.id]),
-            {"password": "user1_password"},
+            {"password": encrypt_password("user1_password")},
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -82,7 +84,8 @@ class UserViewSetTestCase(APITestCase):
 
     def test_destroy_user_wrong_password(self):
         response = self.client.delete(
-            reverse("users-detail", args=[self.user1.id]), {"password": "wrongpassword"}
+            reverse("users-detail", args=[self.user1.id]),
+            {"password": encrypt_password("wrong_password")},
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -94,17 +97,18 @@ class UserViewSetTestCase(APITestCase):
 
     def test_update_password_without_authentication(self):
         self.client.credentials()
-        response = self.client.patch(
-            reverse("users-password"),
-            {"new_password": "newpassword", "old_password": "user1_password"},
-        )
+        data = {
+            "new_password": encrypt_password("newpassword"),
+            "old_password": encrypt_password("user1_password"),
+        }
+        response = self.client.patch(reverse("users-password"), data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_destroy_user_without_authentication(self):
         self.client.credentials()
         response = self.client.delete(
             reverse("users-detail", args=[self.user1.id]),
-            {"password": "user1_password"},
+            {"password": encrypt_password("user1_password")},
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 

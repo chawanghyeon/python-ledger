@@ -9,18 +9,18 @@ def make_key():
     key = RSA.generate(2048)
 
     # Save private key to a file
-    with open("payhere/password/private_key.pem", "wb") as f:
+    with open("payhere/security/private_key.pem", "wb") as f:
         f.write(key.export_key())
 
     # Export public key
     public_key = key.publickey().export_key()
 
     # Save public key to a file
-    with open("payhere/password/public_key.pem", "wb") as f:
+    with open("payhere/security/public_key.pem", "wb") as f:
         f.write(public_key)
 
     # Import public key
-    with open("payhere/password/public_key.pem", "rb") as f:
+    with open("payhere/security/public_key.pem", "rb") as f:
         recipient_key = RSA.import_key(f.read())
 
     # Encrypt password
@@ -31,7 +31,7 @@ def make_key():
     ).decode()
 
     # Import private key
-    with open("payhere/password/private_key.pem", "rb") as f:
+    with open("payhere/security/private_key.pem", "rb") as f:
         private_key = RSA.import_key(f.read())
 
     # Decrypt password
@@ -47,7 +47,7 @@ def make_key():
 
 def encrypt_password(password: str) -> str:
     # Import public key
-    with open("payhere/password/public_key.pem", "rb") as f:
+    with open("payhere/security/public_key.pem", "rb") as f:
         recipient_key = RSA.import_key(f.read())
 
     # Encrypt password
@@ -61,7 +61,7 @@ def encrypt_password(password: str) -> str:
 
 def decrypt_password(encrypted_password: str) -> str:
     # Import private key
-    with open("payhere/password/private_key.pem", "rb") as f:
+    with open("payhere/security/private_key.pem", "rb") as f:
         private_key = RSA.import_key(f.read())
 
     # Decrypt password
