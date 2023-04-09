@@ -2,14 +2,14 @@
 
 효율적이고 유연한 구조로, 각 테이블 간의 관계를 명확하게 설계했습니다. 사용자 인증 및 권한 관리를 효과적으로 수행하며, 가계부 및 예산 정보를 사용자 별로 관리할 수 있습니다. 이로써 사용자가 원활하게 서비스를 이용하고 시스템 확장 및 유지보수가 용이 해집니다.
 
-- User: 사용자 정보(Django의 AbstractUser상속)
+- `User`: 사용자 정보(Django의 AbstractUser상속)
     - id (PK): 사용자 식별자
     - username: 이메일 (unique, 이메일로 회원가입)
-- CustomType: 사용자 정의 지출 유형
+- `CustomType`: 사용자 정의 지출 유형
     - id (PK): 지출 유형 식별자
     - user_id (FK): 사용자 식별자
     - name : 지출 유형 이름
-- Ledger: 가계부 정보
+- `Ledger`: 가계부 정보
     - id (PK): 가계부 식별자
     - user_id (FK): 사용자 식별자
     - type_id (FK): 지출 유형
@@ -17,13 +17,13 @@
     - memo: 가계부에 상세한 메모
     - amout: 지출 비용
     - date: 지출 날짜
-- SharedLedger: 공유된 가계부 정보
+- `SharedLedger`: 공유된 가계부 정보
     - id (PK): 공유된 가계부 식별자
     - ledger_id (FK): 가계부 식별자
     - token: uuid 토큰 (unique)
     - encoded_token: Base62로 인코딩된 토큰
     - expires_at: 만료되는 날짜
-- Monthly_budget:
+- `Monthly_budget`:
     - id (PK): 월 별 예산 식별자
     - user_id (FK): 사용자 식별자
     - year: 해당 연도
@@ -34,43 +34,43 @@
 
 RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인트 작성이 가능하고 각 리소스에 대해 적절한 HTTP 메서드를 사용합니다. 이를 통해 유지보수와 확장성이 증가하며, 개발자가 API를 쉽게 이해할 수 있습니다.
 
-- User: 사용자
-    - POST /api/users: 사용자 회원가입
-    - POST /api/users/signin: 사용자 로그인
-    - POST /api/users/signout: 사용자 로그아웃
-    - GET /api/users/me: 현재 로그인한 사용자의 정보 조회
-- CustomType: 사용자 정의 지출 유형
-    - GET /api/custom-types: 사용자가 추가한 모든 지출 유형 조회
-    - POST /api/custom-types: 새로운 지출 유형 추가
-    - PUT /api/custom-types/{name}: 지출 유형 수정
-    - DELETE /api/custom-types/{name}: 지출 유형 삭제
-- Ledger: 가계부
-    - GET /api/ledgers: 사용자의 가계부 목록 조회
-    - POST /api/ledgers: 새로운 가계부 항목 추가
-    - GET /api/ledgers/{id}: 특정 가계부 항목 조회
-    - PUT /api/ledgers/{id}: 특정 가계부 항목 수정
-    - DELETE /api/ledgers/{id}: 특정 가계부 항목 삭제
-    - POST /api/ledgers/{id}/duplicate: 특정 가계부 항목 복제
-    - POST /api/ledgers/{id}/share: 특정 가계부 항목 공유 URL 생성
-    - DELETE /api/ledgers/{id}/share: 특정 가계부 항목 공유 삭제
-    - GET /api/ledgers/date: 특정 연월의 가계부 목록 조회
-    - GET /{token}: 공유된 특정 가계부 항목 조회
-- MonthlyBudget: 월별 예산
-    - GET /api/monthly-budgets: 사용자의 월별 예산 목록 조회
-    - POST /api/monthly-budgets: 새로운 월별 예산 추가
-    - GET /api/monthly-budgets/{id}: 특정 월별 예산 조회
-    - PUT /api/monthly-budgets/{id}: 특정 월별 예산 수정
-    - DELETE /api/monthly-budgets/{id}: 특정 월별 예산 삭제
+- `User`: 사용자
+    - `POST /api/users`: 사용자 회원가입
+    - `POST /api/users/signin`: 사용자 로그인
+    - `POST /api/users/signout`: 사용자 로그아웃
+    - `GET /api/users/me`: 현재 로그인한 사용자의 정보 조회
+- `CustomType`: 사용자 정의 지출 유형
+    - `GET /api/custom-types`: 사용자가 추가한 모든 지출 유형 조회
+    - `POST /api/custom-types`: 새로운 지출 유형 추가
+    - `PUT /api/custom-types/{name}`: 지출 유형 수정
+    - `DELETE /api/custom-types/{name}`: 지출 유형 삭제
+- `Ledger`: 가계부
+    - `GET /api/ledgers`: 사용자의 가계부 목록 조회
+    - `POST /api/ledgers`: 새로운 가계부 항목 추가
+    - `GET /api/ledgers/{id}`: 특정 가계부 항목 조회
+    - `PUT /api/ledgers/{id}`: 특정 가계부 항목 수정
+    - `DELETE /api/ledgers/{id}`: 특정 가계부 항목 삭제
+    - `POST /api/ledgers/{id}/duplicate`: 특정 가계부 항목 복제
+    - `POST /api/ledgers/{id}/share`: 특정 가계부 항목 공유 URL 생성
+    - `DELETE /api/ledgers/{id}/share`: 특정 가계부 항목 공유 삭제
+    - `GET /api/ledgers/date`: 특정 연월의 가계부 목록 조회
+    - `GET /{token}`: 공유된 특정 가계부 항목 조회
+- `MonthlyBudget`: 월별 예산
+    - `GET /api/monthly-budgets`: 사용자의 월별 예산 목록 조회
+    - `POST /api/monthly-budgets`: 새로운 월별 예산 추가
+    - `GET /api/monthly-budgets/{id}`: 특정 월별 예산 조회
+    - `PUT /api/monthly-budgets/{id}`: 특정 월별 예산 수정
+    - `DELETE /api/monthly-budgets/{id}`: 특정 월별 예산 삭제
     
 
 ## 3. 아키텍쳐 설계
 
-- 웹 서버: Nginx의 리버스 프록시를 통해 백엔드 서버로 요청을 전달합니다. 이를 통해서 갑작스러운 사용자 증가에도 유연하게 대처할 수 있습니다.
-- 백엔드 서버: DRF를 사용하여 빠르고 효율적인 API 서버를 개발합니다. 재사용 가능한 코드 작성이 가능합니다.
-- 데이터베이스: Mysql 5.7 버전을 사용하며, 장고의 ORM 기능을 활용하여 쉽고 안정적으로 데이터를 관리합니다.
-- 배포: Docker를 사용하여 컨테이너화된 서비스를 제공함으로써, 환경 구성이 단순화되고, 배포 및 관리가 용이합니다.
-- 보안: 인증에 JWT토근 방식을 사용합니다.
-- 코드 스타일: pre-commit, isort, pylint, black, autoflake을 사용해 일관된 코드 스타일을 유지하여 협업시 문제를 최소화합니다.
+- 웹 서버: `Nginx`의 리버스 프록시를 통해 백엔드 서버로 요청을 전달합니다. 이를 통해서 갑작스러운 사용자 증가에도 유연하게 대처할 수 있습니다.
+- 백엔드 서버: `DRF`를 사용하여 빠르고 효율적인 API 서버를 개발합니다. 재사용 가능한 코드 작성이 가능합니다.
+- 데이터베이스: `Mysql 5.7` 버전을 사용하며, 장고의 ORM 기능을 활용하여 쉽고 안정적으로 데이터를 관리합니다.
+- 배포: `Docker`를 사용하여 컨테이너화된 서비스를 제공함으로써, 환경 구성이 단순화되고, 배포 및 관리가 용이합니다.
+- 보안: 인증에 `JWT`토근 방식을 사용합니다.
+- 코드 스타일: `pre-commit, isort, pylint, black, autoflake`을 사용해 일관된 코드 스타일을 유지하여 협업시 문제를 최소화합니다.
 
 ## 4. 진행하면서 겪은 문제들
 
@@ -100,7 +100,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
         user = authenticate(**data)
         
         if user is None:
-        		return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         
         token = RefreshToken.for_user(user)
         ```
@@ -177,14 +177,14 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
                     return str(self.token)
             
             def retrieve(self, request: HttpRequest, token: str) -> Response:
-                    shared_ledger = SharedLedger.objects.get(encoded_token=token)
-            
-                    if shared_ledger.is_expired():
-                        return Response(status=status.HTTP_404_NOT_FOUND)
-            
-                    serializer = LedgerSerializer(shared_ledger.ledger)
-            
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+                shared_ledger = SharedLedger.objects.get(encoded_token=token)
+
+                if shared_ledger.is_expired():
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+
+                serializer = LedgerSerializer(shared_ledger.ledger)
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
             ```
             
     - 이러한 접근 방식을 통해 단축 URL 기능을 성공적으로 구현하였고, 이 과정에서 다양한 기술적 고려 사항을 다루게 되었습니다. 이 경험이 앞으로의 프로젝트에서도 도움이 될 것이라 생각합니다.
@@ -194,7 +194,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     총 51개의 테스트 코드를 작성했습니다. 직접 테스트 해보는 방법은 다음과 같습니다. (m1 mac환경)
     
     ```bash
-    git clone [https://github.com/chawanghyeon/python-ledger.git](https://github.com/chawanghyeon/python-ledger.git)
+    git clone https://github.com/chawanghyeon/python-ledger.git
     ```
     
     프로젝트 루트 파일로 이동 후 아래 명령어를 실행합니다.
@@ -217,5 +217,5 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     web이 실행되고 있는 terminal에서 다음 명령어를 실행합니다.
     
     ```bash
-    python [manage.py](http://manage.py/) test --settings=payhere.settings.prod
+    python manage.py test --settings=payhere.settings.prod
     ```
