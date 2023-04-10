@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -13,7 +13,7 @@ from ledgers.views import LedgerViewSet, SharedLedgerViewSet
 from monthly_budgets.views import MonthlyBudgetViewSet
 from users.views import UserViewSet
 
-router = DefaultRouter(trailing_slash=False)
+router = SimpleRouter(trailing_slash=False)
 router.register("users", UserViewSet, basename="users")
 router.register("monthly-budgets", MonthlyBudgetViewSet, basename="monthly-budgets")
 router.register("custom-types", CustomTypeViewSet, basename="custom-types")
