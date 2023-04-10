@@ -20,7 +20,6 @@
 - `SharedLedger`: 공유된 가계부 정보
     - id (PK): 공유된 가계부 식별자
     - ledger_id (FK): 가계부 식별자
-    - token: uuid 토큰 (unique)
     - encoded_token: Base62로 인코딩된 토큰
     - expires_at: 만료되는 날짜
 - `Monthly_budget`:
