@@ -70,7 +70,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
 - 백엔드 서버: `DRF`를 사용하여 빠르고 효율적인 API 서버를 개발합니다. 재사용 가능한 코드 작성이 가능합니다.
 - 데이터베이스: `Mysql 5.7` 버전을 사용하며, 장고의 ORM 기능을 활용하여 쉽고 안정적으로 데이터를 관리합니다.
 - 배포: `Docker`를 사용하여 컨테이너화된 서비스를 제공함으로써, 환경 구성이 단순화되고, 배포 및 관리가 용이합니다.
-- 보안: 인증에 `JWT`토근 방식을 사용합니다.
+- 보안: 인증에 `JWT`토근 방식을 사용합니다. RSA를 사용해 비밀번호를 암호화  전달합니다.
 - 코드 스타일: `pre-commit, isort, pylint, black, autoflake`을 사용해 일관된 코드 스타일을 유지하여 협업시 문제를 최소화합니다.
 
 ## 4. 진행하면서 겪은 문제들
@@ -139,23 +139,23 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
             
             ```python
             @action(detail=True, methods=["post"], url_path="share", url_name="share")
-                def share_ledger(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
-                    ledger = Ledger.objects.get(id=pk)
-                    expiration_date = datetime.datetime.now() + timedelta(days=1)
-                    shared_ledger = SharedLedger.objects.create(
-                        ledger=ledger, expires_at=expiration_date
-                    )
-            
-                    encoded_token = base62_encode(shared_ledger.token.int % 10**14)
-            
-                    shared_ledger.encoded_token = encoded_token
-                    shared_ledger.save()
-            
-                    share_url = request.build_absolute_uri(
-                        reverse("shared-ledger", args=[encoded_token])
-                    )
-            
-                    return Response({"url": share_url}, status=status.HTTP_200_OK)
+            def share_ledger(self, request: HttpRequest, pk: Optional[str] = None) -> Response:
+                ledger = Ledger.objects.get(id=pk)
+                expiration_date = datetime.datetime.now() + timedelta(days=1)
+                shared_ledger = SharedLedger.objects.create(
+                    ledger=ledger, expires_at=expiration_date
+                )
+
+                encoded_token = base62_encode(shared_ledger.token.int % 10**14)
+
+                shared_ledger.encoded_token = encoded_token
+                shared_ledger.save()
+
+                share_url = request.build_absolute_uri(
+                    reverse("shared-ledger", args=[encoded_token])
+                )
+
+                return Response({"url": share_url}, status=status.HTTP_200_OK)
             ```
             
     - 단축 URL 조회
@@ -189,34 +189,36 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
             ```
             
     - 이러한 접근 방식을 통해 단축 URL 기능을 성공적으로 구현하였고, 이 과정에서 다양한 기술적 고려 사항을 다루게 되었습니다. 이 경험이 앞으로의 프로젝트에서도 도움이 될 것이라 생각합니다.
-    
-    ## 6. 테스트 방법
-    
-    총 53개의 테스트 코드를 작성했습니다. 직접 테스트 해보는 방법은 다음과 같습니다. (m1 mac환경)
-    
-    ```bash
-    git clone https://github.com/chawanghyeon/python-ledger.git
-    ```
-    
-    프로젝트 루트 파일로 이동 후 아래 명령어를 실행합니다.
-    
-    ```bash
-    docker-compose up -d
-    ```
-    
-    실행 완료 후 mysql terminal에서 다음 명령어들을 실행합니다.
-    root 비밀번호는 rootpassword입니다.
-    
-    ```bash
-    mysql -u root -p
-    GRANT ALL PRIVILEGES ON payhere.* TO 'payhere'@'%';
-    GRANT ALL PRIVILEGES ON test_payhere.* TO 'payhere'@'%';
-    FLUSH PRIVILEGES;
-    exit
-    ```
-    
-    web이 실행되고 있는 terminal에서 다음 명령어를 실행합니다.
-    
-    ```bash
-    python manage.py test --settings=payhere.settings.prod
-    ```
+7. RSA사용
+    - 비밀번호를 단순히 https로 전달하면 안전할 것이라 생각했습니다. 하지만 어떻게 하면 더 안전하게 전송할 수 있을까 조사하던중 RSA 비대칭키를 사용하면 안전하다는 정보를 얻었습니다. pycryptodome를 사용해 제 프로젝트에 적용했습니다.
+
+## 6. 테스트 방법
+
+총 53개의 테스트 코드를 작성했습니다. 직접 테스트 해보는 방법은 다음과 같습니다. (m1 mac환경)
+
+```bash
+git clone https://github.com/chawanghyeon/python-ledger.git
+```
+
+프로젝트 루트 파일로 이동 후 아래 명령어를 실행합니다.
+
+```bash
+docker-compose up -d
+```
+
+실행 완료 후 mysql terminal에서 다음 명령어들을 실행합니다.
+root 비밀번호는 rootpassword입니다.
+
+```bash
+mysql -u root -p
+GRANT ALL PRIVILEGES ON payhere.* TO 'payhere'@'%';
+GRANT ALL PRIVILEGES ON test_payhere.* TO 'payhere'@'%';
+FLUSH PRIVILEGES;
+exit
+```
+
+web이 실행되고 있는 terminal에서 다음 명령어를 실행합니다.
+
+```bash
+python manage.py test --settings=payhere.settings.prod
+```
