@@ -55,6 +55,16 @@ class LedgerViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.ledger1.name)
 
+    def test_retrieve_ledger_other_user(self):
+        user2 = User.objects.create_user(
+            username="user2@user2.com", password="user2_password"
+        )
+        user2_token = RefreshToken.for_user(user2)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {user2_token.access_token}")
+
+        response = self.client.get(reverse("ledgers-detail", args=[self.ledger1.id]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_update_ledger(self):
         response = self.client.patch(
             reverse("ledgers-detail", args=[self.ledger1.id]),
