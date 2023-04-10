@@ -64,7 +64,6 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"], url_name="signin")
     def signin(self, request: HttpRequest) -> Response:
         password = decrypt_password(request.data.get("password"))
-        print(password)
         data = {"username": request.data.get("username"), "password": password}
 
         user = authenticate(**data)
