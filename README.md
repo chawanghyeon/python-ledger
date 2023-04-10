@@ -115,7 +115,19 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
         
 4. drf-spectacular와 serializer의 depth 문제 해결:
     - drf-spectacular를 사용할 때 serializer의 depth 부분에서 에러가 발생하였습니다. 이를 해결하기 위해 drf-spectacular의 depth 지원 여부를 조사 하였고, 지원하지 않음을 확인하였습니다. 그 결과, serializer에서 depth를 제거하고 순환 참조가 발생할 수 있는 필드를 exclude로 제거하여 문제를 해결하였습니다.
-
+5. url충돌 해결
+    - 같은 url_path를 사용하는 함수들에서 충돌이 발생해 url 매핑을 명시적으로 해줘 해결했습니다.
+    
+    ```python
+    path(
+        "api/ledgers/<int:pk>/share",
+        LedgerViewSet.as_view(
+            {"post": "share_ledger", "delete": "delete_shared_ledger"}
+        ),
+        name="ledgers-share",
+    )
+    ```
+   
 ## 5. 코드에 관한 생각
 
 1. 확장 가능한 코드를 작성
@@ -193,6 +205,10 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
     - 비밀번호를 단순히 https로 전달하면 안전할 것이라 생각했습니다. 하지만 어떻게 하면 더 안전하게 전송할 수 있을까 조사하던중 RSA 비대칭키를 사용하면 안전하다는 정보를 얻었습니다. pycryptodome를 사용해 제 프로젝트에 적용했습니다.
 8. 권한 변경
     - 가계부 내용은 지극히 개인적인 내용이기 때문에 다른 사용자가 읽기도 불가능해야 한다고 판단해 기존에 사용했던 IsOwnerOrReadOnly를 IsOwner로 전환했습니다.
+9. APPEND_SLASH = False
+    - 조금 더 RESTful한 API를 만들기 위해 설정했습니다.
+10. SimpleRouter 사용
+    - drf spectacular를 사용하기 때문에 API root view가 필요없다고 생각해 DefaultRouter를 SimpleRouter로 수정했습니다.
 
 ## 6. 테스트 방법
 
