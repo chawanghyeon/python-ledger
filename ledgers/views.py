@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from datetime import timedelta
 from typing import Optional
 
@@ -88,7 +89,7 @@ class LedgerViewSet(viewsets.ModelViewSet):
             ledger=ledger, expires_at=expiration_date
         )
 
-        encoded_token = base62_encode(shared_ledger.token.int % 10**14)
+        encoded_token = base62_encode(uuid.uuid4().int % 10**14)
 
         shared_ledger.encoded_token = encoded_token
         shared_ledger.save()

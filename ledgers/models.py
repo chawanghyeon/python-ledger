@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from django.db import models
 
@@ -25,7 +24,6 @@ class Ledger(models.Model):
 
 class SharedLedger(models.Model):
     id = models.BigAutoField(primary_key=True)
-    token = models.UUIDField(default=uuid.uuid4, unique=True)
     encoded_token = models.CharField(max_length=100, unique=True, blank=True)
     ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)
     expires_at = models.DateTimeField()
@@ -34,4 +32,4 @@ class SharedLedger(models.Model):
         return datetime.datetime.now() > self.expires_at
 
     def __str__(self):
-        return str(self.token)
+        return str(self.encoded_token)
