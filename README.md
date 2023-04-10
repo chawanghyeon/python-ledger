@@ -158,7 +158,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
                     ledger=ledger, expires_at=expiration_date
                 )
 
-                encoded_token = base62_encode(shared_ledger.token.int % 10**14)
+                encoded_token = base62_encode(uuid.uuid4().int % 10**14)
 
                 shared_ledger.encoded_token = encoded_token
                 shared_ledger.save()
@@ -177,7 +177,6 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
             ```python
             class SharedLedger(models.Model):
                 id = models.BigAutoField(primary_key=True)
-                token = models.UUIDField(default=uuid.uuid4, unique=True)
                 encoded_token = models.CharField(max_length=100, unique=True, blank=True)
                 ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)
                 expires_at = models.DateTimeField()
@@ -187,7 +186,7 @@ RESTful API 디자인 원칙을 따르고 있어, 일관성 있는 엔드포인�
                     return datetime.datetime.now() > self.expires_at
             
                 def __str__(self):
-                    return str(self.token)
+                    return str(self.encoded_token)
             
             def retrieve(self, request: HttpRequest, token: str) -> Response:
                 shared_ledger = SharedLedger.objects.get(encoded_token=token)
