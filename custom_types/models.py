@@ -10,7 +10,6 @@ class CustomType(models.Model):
 
     class Meta:
         unique_together = ["name", "user"]
-        ordering = ["name"]
 
     def __str__(self):
         return self.name

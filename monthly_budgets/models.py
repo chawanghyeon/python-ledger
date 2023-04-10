@@ -15,7 +15,6 @@ class MonthlyBudget(models.Model):
 
     class Meta:
         unique_together = ("user", "year", "month")
-        ordering = ["-year", "-month"]
 
     def __str__(self):
         return f"{self.year}-{self.month} Budget for user {self.user.id}"

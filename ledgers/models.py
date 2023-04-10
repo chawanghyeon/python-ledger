@@ -18,7 +18,6 @@ class Ledger(models.Model):
 
     class Meta:
         verbose_name_plural = "Ledgers"
-        ordering = ["-date", "-id"]
 
     def __str__(self):
         return self.name
